@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>四季倒计时</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: rgba(15, 23, 42, 0.65);
+        --text-main: #e5e7eb;
+        --text-sub: #94a3b8;
+        --line: rgba(148, 163, 184, 0.25);
+        --spring: #22c55e;
+        --summer: #f59e0b;
+        --autumn: #f97316;
+        --winter: #38bdf8;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        color: var(--text-main);
+        background: radial-gradient(circle at 20% 20%, #1e293b 0%, #0f172a 45%, #020617 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        padding-left: max(24px, env(safe-area-inset-left));
+        padding-right: max(24px, env(safe-area-inset-right));
+        padding-top: max(24px, env(safe-area-inset-top));
+        padding-bottom: max(24px, env(safe-area-inset-bottom));
+      }
+
+      .wrap {
+        width: min(1080px, 100%);
+      }
+
+      .hero {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 20px 24px;
+        background: var(--panel);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 12px 30px rgba(2, 6, 23, 0.45);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(24px, 3.5vw, 38px);
+        letter-spacing: 0.5px;
+      }
+
+      .sub {
+        margin-top: 8px;
+        color: var(--text-sub);
+        font-size: 14px;
+      }
+
+      .current-season {
+        margin-top: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .badge {
+        font-size: 14px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid currentColor;
+      }
+
+      .remain {
+        font-size: clamp(18px, 2.6vw, 26px);
+        font-weight: 600;
+        display: inline-block;
+        min-width: 22ch;
+        white-space: nowrap;
+      }
+
+      .grid {
+        margin-top: 18px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px;
+        background: rgba(15, 23, 42, 0.58);
+      }
+
+      .name {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .target {
+        margin-top: 8px;
+        font-size: 13px;
+        color: var(--text-sub);
+        min-height: 20px;
+      }
+
+      .time {
+        margin-top: 8px;
+        font-size: 18px;
+        font-weight: 600;
+        display: inline-block;
+        min-width: 20ch;
+        white-space: nowrap;
+      }
+
+      .remain,
+      .time,
+      #beijingNow {
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum" 1;
+      }
+
+      @media (max-width: 560px) {
+        body {
+          align-items: flex-start;
+          padding: 12px;
+          padding-left: max(12px, env(safe-area-inset-left));
+          padding-right: max(12px, env(safe-area-inset-right));
+          padding-top: max(12px, env(safe-area-inset-top));
+          padding-bottom: max(12px, env(safe-area-inset-bottom));
+        }
+
+        .hero {
+          border-radius: 14px;
+          padding: 14px;
+          backdrop-filter: none;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .remain {
+          min-width: 100%;
+          font-size: clamp(16px, 5vw, 22px);
+          line-height: 1.35;
+        }
+
+        .time {
+          min-width: 100%;
+          font-size: clamp(16px, 4.8vw, 20px);
+          line-height: 1.35;
+        }
+
+        .sub {
+          font-size: 13px;
+          line-height: 1.45;
+        }
+      }
+
+      @media (max-width: 420px) {
+        h1 {
+          font-size: 22px;
+        }
+
+        .current-season {
+          gap: 8px;
+          align-items: flex-start;
+        }
+
+        .badge {
+          font-size: 13px;
+          padding: 3px 9px;
+        }
+
+        .card {
+          padding: 12px;
+        }
+
+        .name {
+          font-size: 17px;
+        }
+      }
+
+      .spring {
+        color: var(--spring);
+      }
+
+      .summer {
+        color: var(--summer);
+      }
+
+      .autumn {
+        color: var(--autumn);
+      }
+
+      .winter {
+        color: var(--winter);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <section class="hero">
+        <h1>四季倒计时</h1>
+        <p class="sub">按中国节气“四立”（立春/立夏/立秋/立冬）并固定使用北京时间计算。</p>
+
+        <div class="current-season">
+          <span id="seasonBadge" class="badge">当前：-</span>
+          <span id="seasonRemain" class="remain">剩余：--天 --小时 --分 --秒</span>
+        </div>
+        <p id="beijingNow" class="sub">北京时间：--</p>
+
+        <div class="grid" id="seasonGrid"></div>
+      </section>
+    </main>
+
+    <script>
+      const seasonConfig = [
+        { key: "spring", name: "春天", className: "spring", term: "立春" },
+        { key: "summer", name: "夏天", className: "summer", term: "立夏" },
+        { key: "autumn", name: "秋天", className: "autumn", term: "立秋" },
+        { key: "winter", name: "冬天", className: "winter", term: "立冬" }
+      ];
+
+      const solarTermRule = {
+        // 通用寿星公式：day = floor(Y * 0.2422 + C) - floor(Y / 4)
+        // 其中 Y 是年份后两位；1-2 月节气用 floor((Y-1)/4)
+        spring: { month: 2, c20: 3.87, c21: 4.6295, exceptions: { 2084: 1 } }, // 立春
+        summer: { month: 5, c20: 5.52, c21: 5.52, exceptions: { 1911: 1, 2008: 1 } }, // 立夏
+        autumn: { month: 8, c20: 7.5, c21: 7.5, exceptions: { 2002: 1 } }, // 立秋
+        winter: { month: 11, c20: 7.438, c21: 7.438, exceptions: { 2089: 1 } } // 立冬
+      };
+
+      function formatDiff(ms) {
+        const total = Math.max(0, Math.floor(ms / 1000));
+        const day = Math.floor(total / 86400);
+        const hour = Math.floor((total % 86400) / 3600);
+        const min = Math.floor((total % 3600) / 60);
+        const sec = total % 60;
+        return `${day}天 ${hour.toString().padStart(2, "0")}小时 ${min
+          .toString()
+          .padStart(2, "0")}分 ${sec.toString().padStart(2, "0")}秒`;
+      }
+
+      const beijingFormatter = new Intl.DateTimeFormat("zh-CN", {
+        timeZone: "Asia/Shanghai",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+      });
+
+      function getBeijingParts(date) {
+        const parts = beijingFormatter.formatToParts(date);
+        const result = {};
+        for (const part of parts) {
+          if (part.type !== "literal") result[part.type] = part.value;
+        }
+        return {
+          year: Number(result.year),
+          month: Number(result.month),
+          day: Number(result.day),
+          hour: Number(result.hour),
+          minute: Number(result.minute),
+          second: Number(result.second)
+        };
+      }
+
+      function getBeijingStartMs(year, month, day) {
+        // 北京时间 00:00 对应 UTC 前一天 16:00
+        return Date.UTC(year, month - 1, day, -8, 0, 0, 0);
+      }
+
+      function getSolarTermDay(year, seasonKey) {
+        const rule = solarTermRule[seasonKey];
+        const year2 = year % 100;
+        const c = year >= 2000 ? rule.c21 : rule.c20;
+        const leapBase =
+          rule.month <= 2 ? Math.floor((year2 - 1) / 4) : Math.floor(year2 / 4);
+        let day = Math.floor(year2 * 0.2422 + c) - leapBase;
+        day += rule.exceptions?.[year] || 0;
+        return day;
+      }
+
+      function getSeasonStartMs(year, seasonKey) {
+        const month = solarTermRule[seasonKey].month;
+        const day = getSolarTermDay(year, seasonKey);
+        return getBeijingStartMs(year, month, day);
+      }
+
+      function getCurrentSeasonIndex(nowMs, beijingYear) {
+        const starts = seasonConfig.map((s) => getSeasonStartMs(beijingYear, s.key));
+        if (nowMs >= starts[3] || nowMs < starts[0]) return 3;
+        if (nowMs >= starts[2]) return 2;
+        if (nowMs >= starts[1]) return 1;
+        return 0;
+      }
+
+      function nextSeasonStartMs(seasonIndex, beijingYear) {
+        const nextIndex = (seasonIndex + 1) % 4;
+        const next = seasonConfig[nextIndex];
+        const targetYear = nextIndex === 0 ? beijingYear + 1 : beijingYear;
+        return getSeasonStartMs(targetYear, next.key);
+      }
+
+      function nextStartForSeasonMs(nowMs, beijingYear, season) {
+        let target = getSeasonStartMs(beijingYear, season.key);
+        if (target <= nowMs) {
+          target = getSeasonStartMs(beijingYear + 1, season.key);
+        }
+        return target;
+      }
+
+      function formatBeijingDate(ms) {
+        const parts = getBeijingParts(new Date(ms));
+        return `${parts.year}-${String(parts.month).padStart(2, "0")}-${String(parts.day).padStart(
+          2,
+          "0"
+        )} 00:00`;
+      }
+
+      const seasonGrid = document.getElementById("seasonGrid");
+      const seasonBadge = document.getElementById("seasonBadge");
+      const seasonRemain = document.getElementById("seasonRemain");
+      const beijingNow = document.getElementById("beijingNow");
+      const seasonNodeMap = {};
+
+      function setText(el, text) {
+        if (el.textContent !== text) {
+          el.textContent = text;
+        }
+      }
+
+      seasonGrid.innerHTML = seasonConfig
+        .map(
+          (s) => `
+          <article class="card">
+            <h2 class="name ${s.className}">${s.name}</h2>
+            <div class="target">下次${s.term}：<span data-target-${s.key}></span></div>
+            <div class="time" data-time-${s.key}>--天 --小时 --分 --秒</div>
+          </article>
+        `
+        )
+        .join("");
+
+      for (const season of seasonConfig) {
+        seasonNodeMap[season.key] = {
+          targetEl: document.querySelector(`[data-target-${season.key}]`),
+          timeEl: document.querySelector(`[data-time-${season.key}]`)
+        };
+      }
+
+      function render() {
+        const nowDate = new Date();
+        const nowMs = nowDate.getTime();
+        const nowBeijing = getBeijingParts(nowDate);
+        const currentIndex = getCurrentSeasonIndex(nowMs, nowBeijing.year);
+        const current = seasonConfig[currentIndex];
+        const currentEndMs = nextSeasonStartMs(currentIndex, nowBeijing.year);
+
+        setText(seasonBadge, `当前：${current.name}`);
+        seasonBadge.className = `badge ${current.className}`;
+        setText(seasonRemain, `剩余：${formatDiff(currentEndMs - nowMs)}`);
+        setText(
+          beijingNow,
+          `北京时间：${String(nowBeijing.year)}-${String(nowBeijing.month).padStart(
+            2,
+            "0"
+          )}-${String(nowBeijing.day).padStart(2, "0")} ${String(nowBeijing.hour).padStart(
+            2,
+            "0"
+          )}:${String(nowBeijing.minute).padStart(2, "0")}:${String(nowBeijing.second).padStart(
+            2,
+            "0"
+          )}`
+        );
+
+        for (const season of seasonConfig) {
+          const startMs = nextStartForSeasonMs(nowMs, nowBeijing.year, season);
+          const { targetEl, timeEl } = seasonNodeMap[season.key];
+          setText(targetEl, formatBeijingDate(startMs));
+          setText(timeEl, formatDiff(startMs - nowMs));
+        }
+      }
+
+      render();
+      setInterval(render, 1000);
+    </script>
+  </body>
+</html>
