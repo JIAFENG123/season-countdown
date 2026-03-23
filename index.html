@@ -94,6 +94,139 @@
         gap: 12px;
       }
 
+      .special-grid {
+        margin-top: 16px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(260px, 1fr));
+        gap: 12px;
+      }
+
+      .special-card {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px;
+        background: rgba(15, 23, 42, 0.58);
+      }
+
+      .special-title {
+        margin: 0;
+        font-size: 15px;
+        color: var(--text-sub);
+      }
+
+      .year-wrap {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .ring {
+        position: relative;
+        --size: 120px;
+        --stroke: 10;
+        --circ: 339.29;
+        width: var(--size);
+        height: var(--size);
+        flex: 0 0 var(--size);
+      }
+
+      .ring svg {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+      }
+
+      .ring-track {
+        fill: none;
+        stroke: rgba(148, 163, 184, 0.2);
+        stroke-width: var(--stroke);
+      }
+
+      .ring-progress {
+        fill: none;
+        stroke: var(--status-color, #22c55e);
+        stroke-width: var(--stroke);
+        stroke-linecap: round;
+        stroke-dasharray: var(--circ);
+        stroke-dashoffset: var(--circ);
+        transition: stroke-dashoffset 0.35s ease, stroke 0.35s ease;
+      }
+
+      .ring-center {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        line-height: 1.12;
+      }
+
+      .ring-center strong {
+        display: block;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--status-color, #22c55e);
+      }
+
+      .metric-meta {
+        min-width: 0;
+      }
+
+      .metric-main {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .metric-sub {
+        margin: 6px 0 0;
+        font-size: 13px;
+        color: var(--text-sub);
+      }
+
+      .battery-shell {
+        margin-top: 12px;
+        position: relative;
+        height: 26px;
+        border: 2px solid var(--status-color, #94a3b8);
+        border-radius: 7px;
+        overflow: hidden;
+        background: rgba(148, 163, 184, 0.14);
+        box-shadow: inset 0 0 0 1px rgba(2, 6, 23, 0.2);
+      }
+
+      .battery-shell::after {
+        content: "";
+        position: absolute;
+        right: -7px;
+        top: 6px;
+        width: 5px;
+        height: 10px;
+        border-radius: 2px;
+        background: var(--status-color, #94a3b8);
+      }
+
+      .battery-fill {
+        position: absolute;
+        inset: 0 auto 0 0;
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(
+          90deg,
+          var(--status-color, #22c55e) 0%,
+          var(--status-color, #22c55e) 75%,
+          rgba(255, 255, 255, 0.2) 100%
+        );
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+        transition: width 0.35s ease, background 0.35s ease;
+      }
+
+      .spring-meta {
+        margin-top: 10px;
+      }
+
       .card {
         border: 1px solid var(--line);
         border-radius: 14px;
@@ -150,6 +283,11 @@
           gap: 10px;
         }
 
+        .special-grid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
         .remain {
           min-width: 100%;
           font-size: clamp(16px, 5vw, 22px);
@@ -165,6 +303,27 @@
         .sub {
           font-size: 13px;
           line-height: 1.45;
+        }
+
+        .year-wrap {
+          gap: 12px;
+        }
+
+        .ring {
+          --size: 108px;
+        }
+
+        .ring-center strong {
+          font-size: 18px;
+        }
+
+        .battery-shell {
+          height: 24px;
+        }
+
+        .metric-main {
+          font-size: 15px;
+          white-space: normal;
         }
       }
 
@@ -184,6 +343,10 @@
         }
 
         .card {
+          padding: 12px;
+        }
+
+        .special-card {
           padding: 12px;
         }
 
@@ -221,6 +384,38 @@
         </div>
         <p id="beijingNow" class="sub">北京时间：--</p>
 
+        <div class="special-grid">
+          <article id="yearCard" class="special-card" style="--status-color: #22c55e">
+            <h2 class="special-title">本年剩余（圆环）</h2>
+            <div class="year-wrap">
+              <div class="ring">
+                <svg viewBox="0 0 120 120" aria-hidden="true">
+                  <circle class="ring-track" cx="60" cy="60" r="54"></circle>
+                  <circle id="yearRingProgress" class="ring-progress" cx="60" cy="60" r="54"></circle>
+                </svg>
+                <div class="ring-center">
+                  <strong id="yearRingPercentValue">0%</strong>
+                </div>
+              </div>
+              <div class="metric-meta">
+                <p id="yearRemainLabel" class="metric-main">本年剩余：--</p>
+                <p id="yearStatusLabel" class="metric-sub">状态：--</p>
+              </div>
+            </div>
+          </article>
+
+          <article id="springCard" class="special-card" style="--status-color: #22c55e">
+            <h2 class="special-title">春节倒计时（电池）</h2>
+            <div class="battery-shell">
+              <div id="springBatteryFill" class="battery-fill"></div>
+            </div>
+            <div class="spring-meta">
+              <p id="springFestivalLabel" class="metric-main">本年春节：--</p>
+              <p id="springStatusLabel" class="metric-sub">状态：--</p>
+            </div>
+          </article>
+        </div>
+
         <div class="grid" id="seasonGrid"></div>
       </section>
     </main>
@@ -240,6 +435,21 @@
         summer: { month: 5, c20: 5.52, c21: 5.52, exceptions: { 1911: 1, 2008: 1 } }, // 立夏
         autumn: { month: 8, c20: 7.5, c21: 7.5, exceptions: { 2002: 1 } }, // 立秋
         winter: { month: 11, c20: 7.438, c21: 7.438, exceptions: { 2089: 1 } } // 立冬
+      };
+
+      const springFestivalMap = {
+        2024: "2024-02-10",
+        2025: "2025-01-29",
+        2026: "2026-02-17",
+        2027: "2027-02-06",
+        2028: "2028-01-26",
+        2029: "2029-02-13",
+        2030: "2030-02-03",
+        2031: "2031-01-23",
+        2032: "2032-02-11",
+        2033: "2033-01-31",
+        2034: "2034-02-19",
+        2035: "2035-02-08"
       };
 
       function formatDiff(ms) {
@@ -333,10 +543,62 @@
         )} 00:00`;
       }
 
+      function clamp01(value) {
+        return Math.max(0, Math.min(1, value));
+      }
+
+      function getYearStatus(remainingRatio) {
+        if (remainingRatio > 0.5) return { color: "#22c55e", text: "状态：正常" };
+        if (remainingRatio > 0.2) return { color: "#f59e0b", text: "状态：提醒" };
+        if (remainingRatio > 0.05) return { color: "#f97316", text: "状态：紧张" };
+        return { color: "#ef4444", text: "状态：临近年末" };
+      }
+
+      function getSpringStatus(remainingRatio) {
+        if (remainingRatio > 0.66) return { color: "#22c55e", text: "状态：周期前段，充足" };
+        if (remainingRatio > 0.4) return { color: "#f59e0b", text: "状态：周期中段，提醒" };
+        if (remainingRatio > 0.15) return { color: "#f97316", text: "状态：周期后段，临近" };
+        return { color: "#ef4444", text: "状态：接近春节" };
+      }
+
+      function parseYmdToStartMs(ymd) {
+        const [y, m, d] = ymd.split("-").map(Number);
+        return getBeijingStartMs(y, m, d);
+      }
+
+      function getSpringFestivalCycle(nowMs) {
+        const points = Object.entries(springFestivalMap)
+          .map(([year, date]) => ({
+            year: Number(year),
+            date,
+            ms: parseYmdToStartMs(date)
+          }))
+          .sort((a, b) => a.ms - b.ms);
+
+        if (points.length < 2) return null;
+
+        let nextIndex = points.findIndex((item) => item.ms > nowMs);
+        if (nextIndex === -1 || nextIndex === 0) return null;
+
+        return {
+          previous: points[nextIndex - 1],
+          next: points[nextIndex]
+        };
+      }
+
       const seasonGrid = document.getElementById("seasonGrid");
       const seasonBadge = document.getElementById("seasonBadge");
       const seasonRemain = document.getElementById("seasonRemain");
       const beijingNow = document.getElementById("beijingNow");
+      const yearCard = document.getElementById("yearCard");
+      const yearRingProgress = document.getElementById("yearRingProgress");
+      const yearRingPercentValue = document.getElementById("yearRingPercentValue");
+      const yearRemainLabel = document.getElementById("yearRemainLabel");
+      const yearStatusLabel = document.getElementById("yearStatusLabel");
+      const springCard = document.getElementById("springCard");
+      const springBatteryFill = document.getElementById("springBatteryFill");
+      const springFestivalLabel = document.getElementById("springFestivalLabel");
+      const springStatusLabel = document.getElementById("springStatusLabel");
       const seasonNodeMap = {};
 
       function setText(el, text) {
@@ -388,6 +650,43 @@
             "0"
           )}`
         );
+
+        const yearStartMs = getBeijingStartMs(nowBeijing.year, 1, 1);
+        const nextYearStartMs = getBeijingStartMs(nowBeijing.year + 1, 1, 1);
+        const yearTotalMs = nextYearStartMs - yearStartMs;
+        const yearRemainMs = Math.max(0, nextYearStartMs - nowMs);
+        const yearElapsedRatio = clamp01(1 - yearRemainMs / yearTotalMs);
+        const yearRemainRatio = 1 - yearElapsedRatio;
+        const yearStatus = getYearStatus(yearRemainRatio);
+        const ringCirc = 339.29;
+        const ringOffset = ringCirc * (1 - yearElapsedRatio);
+
+        yearCard.style.setProperty("--status-color", yearStatus.color);
+        yearRingProgress.style.strokeDashoffset = ringOffset.toFixed(2);
+        setText(yearRingPercentValue, `${Math.round(yearElapsedRatio * 100)}%`);
+        setText(yearRemainLabel, `本年剩余：${formatDiff(yearRemainMs)}`);
+        setText(yearStatusLabel, yearStatus.text);
+
+        const springCycle = getSpringFestivalCycle(nowMs);
+        if (springCycle) {
+          const cycleTotalMs = springCycle.next.ms - springCycle.previous.ms;
+          const cycleRemainMs = Math.max(0, springCycle.next.ms - nowMs);
+          const cycleRemainRatio = clamp01(cycleRemainMs / cycleTotalMs);
+          const springStatus = getSpringStatus(cycleRemainRatio);
+
+          springCard.style.setProperty("--status-color", springStatus.color);
+          springBatteryFill.style.width = `${Math.round(cycleRemainRatio * 100)}%`;
+          setText(springFestivalLabel, `距下一个春节（${springCycle.next.date}）：${formatDiff(cycleRemainMs)}`);
+          setText(
+            springStatusLabel,
+            `${springStatus.text} | 周期：${springCycle.previous.date} ~ ${springCycle.next.date}`
+          );
+        } else {
+          springCard.style.setProperty("--status-color", "#94a3b8");
+          springBatteryFill.style.width = "0%";
+          setText(springFestivalLabel, "春节倒计时：暂无足够年份数据");
+          setText(springStatusLabel, "状态：请补充 springFestivalMap");
+        }
 
         for (const season of seasonConfig) {
           const startMs = nextStartForSeasonMs(nowMs, nowBeijing.year, season);
