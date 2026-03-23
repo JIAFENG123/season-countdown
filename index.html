@@ -386,7 +386,7 @@
 
         <div class="special-grid">
           <article id="yearCard" class="special-card" style="--status-color: #22c55e">
-            <h2 class="special-title">本年剩余（圆环）</h2>
+            <h2 class="special-title">本年进度</h2>
             <div class="year-wrap">
               <div class="ring">
                 <svg viewBox="0 0 120 120" aria-hidden="true">
@@ -405,7 +405,7 @@
           </article>
 
           <article id="springCard" class="special-card" style="--status-color: #22c55e">
-            <h2 class="special-title">春节倒计时（电池）</h2>
+            <h2 class="special-title">春节倒计时</h2>
             <div class="battery-shell">
               <div id="springBatteryFill" class="battery-fill"></div>
             </div>
@@ -555,10 +555,10 @@
       }
 
       function getSpringStatus(remainingRatio) {
-        if (remainingRatio > 0.66) return { color: "#22c55e", text: "状态：周期前段，充足" };
-        if (remainingRatio > 0.4) return { color: "#f59e0b", text: "状态：周期中段，提醒" };
-        if (remainingRatio > 0.15) return { color: "#f97316", text: "状态：周期后段，临近" };
-        return { color: "#ef4444", text: "状态：接近春节" };
+        if (remainingRatio > 0.66) return { color: "#22c55e", text: "状态：时间充足" };
+        if (remainingRatio > 0.4) return { color: "#f59e0b", text: "状态：可以准备了" };
+        if (remainingRatio > 0.15) return { color: "#f97316", text: "状态：请尽快安排" };
+        return { color: "#ef4444", text: "状态：马上就到春节" };
       }
 
       function parseYmdToStartMs(ymd) {
